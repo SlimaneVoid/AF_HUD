@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AF HUD</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: transparent;
+            font-family: Arial, sans-serif;
+        }
+
+        .hud-container {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .hud-item {
+            position: relative;
+            margin: 10px;
+            text-align: center;
+        }
+
+        .hexagon {
+            width: 60px;
+            height: 60px;
+            background-color: transparent;
+            clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+            border: 3px solid #fff;
+            position: relative;
+        }
+
+        .micOn .hexagon {
+            background-color: rgba(0, 255, 0, 0.5);
+        }
+
+        .micOff .hexagon {
+            background-color: rgba(255, 0, 0, 0.5);
+        }
+
+        .hud-item img {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 30px;
+            height: 30px;
+        }
+
+        .hexagon img {
+            width: 40px;
+            height: 40px;
+        }
+
+        .hexagon.filled {
+            opacity: 1;
+        }
+
+        .hexagon.empty {
+            opacity: 0.3;
+        }
+    </style>
+</head>
+<body>
+    <div class="hud-container">
+        <div class="hud-item mic" id="micStatus">
+            <div class="hexagon"></div>
+            <img src="../images/mic_off.png" alt="Mic" id="micIcon">
+        </div>
+        <div class="hud-item health">
+            <div class="hexagon empty" id="healthHex"></div>
+            <img src="../images/heart.png" alt="Health">
+        </div>
+        <div class="hud-item hunger">
+            <div class="hexagon empty" id="hungerHex"></div>
+            <img src="../images/burger.png" alt="Hunger">
+        </div>
+        <div class="hud-item thirst">
+            <div class="hexagon empty" id="thirstHex"></div>
+            <img src="../images/water-drop.png" alt="Thirst">
+        </div>
+        <div class="hud-item armor">
+            <div class="hexagon empty" id="armorHex"></div>
+            <img src="../images/body.png" alt="Armor">
+        </div>
+        <div class="hud-item radar">
+            <div class="hexagon empty" id="radarHex"></div>
+            <img src="../images/video-camera.png" alt="Radar">
+        </div>
+    </div>
+
+    <script>
+        // Set initial HUD values
+        let micStatus = false; // false = off, true = on
+        let health = 75; // Health from 0 to 100
+        let hunger = 50; // Hunger from 0 to 100
+        let thirst = 60; // Thirst from 0 to 100
+        let armor = 80;  // Armor from 0 to 100
+        let radarActive = true; // Radar is active (true) or inactive (false)
+
+        function updateHexagon(id, percentage) {
+            const hexagon = document.getElementById(id);
+            const color = `rgba(0, 255, 0, ${percentage / 100})`; // Green color with opacity based on percentage
+            hexagon.style.backgroundColor = color;
+            hexagon.classList.add('filled');
+        }
+
+        function resetHexagon(id) {
+            const hexagon = document.getElementById(id);
+            hexagon.style.backgroundColor = 'rgba(255, 0, 0, 0.3)'; // Default to red with low opacity
+            hexagon.classList.remove('filled');
+        }
+
+        function toggleMic() {
+            const micElement = document.getElementById("micStatus");
+            const micIcon = document.getElementById("micIcon");
+
+            if (micStatus) {
+                micElement.classList.remove("micOn");
+                micElement.classList.add("micOff");
+                micIcon.src = "images/mic_off.png";
+            } else {
+                micElement.classList.remove("micOff");
+                micElement.classList.add("micOn");
+                micIcon.src = "images/mic_on.png";
+            }
+            micStatus = !micStatus;
+        }
+
+        // Simulate the HUD updates
+        function updateHud() {
+            // Health, Hunger, Thirst, Armor, Radar
+            updateHexagon('healthHex', health);
+            updateHexagon('hungerHex', hunger);
+            updateHexagon('thirstHex', thirst);
+            updateHexagon('armorHex', armor);
+            updateHexagon('radarHex', radarActive ? 100 : 0); // If radar is active, it is green (100), else red (0)
+        }
+
+        // Initial HUD setup
+        updateHud();
+
+        // Example to toggle mic status every 5 seconds (this simulates voice on/off)
+        setInterval(toggleMic, 5000); // Toggle every 5 seconds for demo
+    </script>
+</body>
+</html>
